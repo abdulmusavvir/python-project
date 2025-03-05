@@ -30,8 +30,8 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh '/opt/sonar-scanner/bin/sonar-scanner'  // Use full path
+                 withSonarQubeEnv(credentialsId: '15df4791-bced-401f-8156-6cfe890a2df7') {
+                    sh '/opt/sonar-scanner/bin/sonar-scanner'  
                 }
             }
         }
