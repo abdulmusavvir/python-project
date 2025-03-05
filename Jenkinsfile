@@ -31,10 +31,11 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    sh 'sonar-scanner'
+                    sh '/opt/sonar-scanner/bin/sonar-scanner'  // Use full path
                 }
             }
         }
+
 
         stage('Quality Gate') {
             steps {
