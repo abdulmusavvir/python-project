@@ -30,8 +30,11 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') {  // Ensure 'SonarQube' is your Jenkins SonarQube installation name
-                    sh 'sonar-scanner -Dsonar.projectKey=flask-app -Dsonar.sources=. -Dsonar.host.url=$SONARQUBE_URL -Dsonar.login=$SONAR_TOKEN'
+                withSonarQubeEnv('SonarQube') {
+                    sh '''
+                    export PATH=$PATH:/opt/sonar-scanner/bin
+                    sonar-scanner -Dsonar.projectKey=flask-app -Dsonar.sources=. -Dsonar.host.url=$SONARQUBE_URL -Dsonar.login=$SONAR_TOKEN
+                    '''
                 }
             }
         }
