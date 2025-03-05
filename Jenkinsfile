@@ -33,7 +33,7 @@ pipeline {
                 withSonarQubeEnv('SonarQube') {
                     sh '''
                     export PATH=$PATH:/opt/sonar-scanner/bin
-                    sonar-scanner -Dsonar.projectKey=flask-app -Dsonar.sources=. -Dsonar.host.url=$SONARQUBE_URL -Dsonar.login=$SONAR_TOKEN
+                    sonar-scanner -Dsonar.projectKey=flask-app -Dsonar.sources=. -Dsonar.host.url=http://172.21.147.236:9000 -Dsonar.login=sqa_f6d54425574f8235385b80493cfd2a9254fb798f
                     '''
                 }
             }
