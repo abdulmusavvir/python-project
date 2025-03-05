@@ -30,12 +30,11 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv(credentialsId: '15df4791-bced-401f-8156-6cfe890a2df7') {
+                withSonarQubeEnv('SonarQube') {  // Ensure 'SonarQube' is your Jenkins SonarQube installation name
                     sh 'sonar-scanner -Dsonar.projectKey=flask-app -Dsonar.sources=. -Dsonar.host.url=$SONARQUBE_URL -Dsonar.login=$SONAR_TOKEN'
                 }
             }
         }
-
 
         stage('Quality Gate') {
             steps {
