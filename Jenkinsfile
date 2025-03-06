@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_HOST = "tcp://20.235.247.197:2375"  // Connect to Docker on Azure
         AZURE_CLIENT_ID = "366a3d0b-2fa4-4cbc-8627-d37c2d90153b"
-        AZURE_CLIENT_SECRET = "b_L8Q~HxxpH5O9kb22MrpkEicxbikf7ltrp32a8I"
+        AZURE_CLIENT_SECRET = ""
         AZURE_TENANT_ID = "0a613baa-b33d-44d7-a7dd-f60f1b6a4eb7"
         AZURE_SUBSCRIPTION_ID = "2c867d44-5881-44bf-be4f-bc81b5554f2d"
         ACR_NAME = credentials('ACR_NAME')   // Fetch ACR name from Jenkins credentials
