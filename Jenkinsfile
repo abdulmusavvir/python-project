@@ -5,6 +5,13 @@ pipeline {
         // SONARQUBE_URL = 'http://172.21.147.236:9000'  // SonarQube Server
         DOCKER_HOST = "tcp://20.235.247.197:2375"  // Connect to Docker on Azure
         IMAGE_NAME = "flask-app"
+        AZURE_CLIENT_ID = credentials('AZURE_CLIENT_ID')
+        AZURE_CLIENT_SECRET = credentials('AZURE_CLIENT_SECRET')
+        AZURE_TENANT_ID = credentials('AZURE_TENANT_ID')
+        AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
+        ACR_NAME = credentials('ACR_NAME')
+        IMAGE_NAME = "myapp"
+        IMAGE_TAG = "latest"
         // DOCKER_REGISTRY = "your-dockerhub-username"
     }
 
@@ -55,6 +62,40 @@ pipeline {
                 """
             }
         }
+
+       stages {
+            stage('Azure Login') {
+                steps {
+                    script {
+                        sh '''
+                        az login --service-principal \
+                            --username "$AZURE_CLIENT_ID" \
+                            --password "$AZURE_CLIENT_SECRET" \
+                            --tenant "$AZURE_TENANT_ID"
+    
+                        az acr login --name "$ACR_NAME"
+                        '''
+                    }
+                }
+            }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh '''
+                    docker build -t "$ACR_NAME.azurecr.io/$IMAGE_NAME:$IMAGE_TAG" .
+                    '''
+                }
+            }
+        }
+        stage('Push to ACR') {
+                    steps {
+                        script {
+                            sh '''
+                            docker push "$ACR_NAME.azurecr.io/$IMAGE_NAME:$IMAGE_TAG"
+                            '''
+                        }
+                    }
+                }
 
         // stage('Push Docker Image') {
         //     steps {
