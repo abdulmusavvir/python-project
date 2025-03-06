@@ -9,7 +9,7 @@ pipeline {
         AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
         ACR_NAME = credentials('ACR_NAME')
         IMAGE_NAME = "myapp"
-        IMAGE_TAG = "latest"
+        IMAGE_TAG = "${BUILD_ID}"
     }
 
     stages {
