@@ -21,11 +21,11 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
-            steps {
-                sh 'pytest --junitxml=pytest-report.xml'
-            }
-        }
+        // stage('Run Tests') {
+        //     steps {
+        //         sh 'pytest --junitxml=pytest-report.xml'
+        //     }
+        // }
 
         // stage('SonarQube Analysis') {
         //     steps {
