@@ -2,9 +2,7 @@ pipeline {
     agent any
 
     environment {
-        // SONARQUBE_URL = 'http://172.21.147.236:9000'  // SonarQube Server
         DOCKER_HOST = "tcp://20.235.247.197:2375"  // Connect to Docker on Azure
-        IMAGE_NAME = "flask-app"
         AZURE_CLIENT_ID = credentials('AZURE_CLIENT_ID')
         AZURE_CLIENT_SECRET = credentials('AZURE_CLIENT_SECRET')
         AZURE_TENANT_ID = credentials('AZURE_TENANT_ID')
@@ -12,7 +10,6 @@ pipeline {
         ACR_NAME = credentials('ACR_NAME')
         IMAGE_NAME = "myapp"
         IMAGE_TAG = "latest"
-        // DOCKER_REGISTRY = "your-dockerhub-username"
     }
 
     stages {
@@ -28,56 +25,21 @@ pipeline {
             }
         }
 
-        // stage('Run Tests') {
-        //     steps {
-        //         sh 'pytest --junitxml=pytest-report.xml'
-        //     }
-        // }
-
-        // stage('SonarQube Analysis') {
-        //     steps {
-        //         withSonarQubeEnv('SonarQube') {
-        //             bat 'sonar-scanner'
-        //         }
-        //     }
-        // }
-
-        // stage('Quality Gate') {
-        //     steps {
-        //         script {
-        //             timeout(time: 1, unit: 'MINUTES') {
-        //                 def qg = waitForQualityGate()
-        //                 if (qg.status != 'OK') {
-        //                     error "Pipeline failed due to SonarQube quality gate failure: ${qg.status}"
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-
-        stage('Build Docker Image') {
+        stage('Azure Login') {
             steps {
-                sh """
-                docker build -t $IMAGE_NAME:latest .
-                """
+                script {
+                    sh '''
+                    az login --service-principal \
+                        --username "$AZURE_CLIENT_ID" \
+                        --password "$AZURE_CLIENT_SECRET" \
+                        --tenant "$AZURE_TENANT_ID"
+
+                    az acr login --name "$ACR_NAME"
+                    '''
+                }
             }
         }
 
-       stages {
-            stage('Azure Login') {
-                steps {
-                    script {
-                        sh '''
-                        az login --service-principal \
-                            --username "$AZURE_CLIENT_ID" \
-                            --password "$AZURE_CLIENT_SECRET" \
-                            --tenant "$AZURE_TENANT_ID"
-    
-                        az acr login --name "$ACR_NAME"
-                        '''
-                    }
-                }
-            }
         stage('Build Docker Image') {
             steps {
                 script {
@@ -87,32 +49,15 @@ pipeline {
                 }
             }
         }
+
         stage('Push to ACR') {
-                    steps {
-                        script {
-                            sh '''
-                            docker push "$ACR_NAME.azurecr.io/$IMAGE_NAME:$IMAGE_TAG"
-                            '''
-                        }
-                    }
+            steps {
+                script {
+                    sh '''
+                    docker push "$ACR_NAME.azurecr.io/$IMAGE_NAME:$IMAGE_TAG"
+                    '''
                 }
-
-        // stage('Push Docker Image') {
-        //     steps {
-        //         withCredentials([string(credentialsId: 'docker-hub-credentials', variable: 'DOCKER_PASSWORD')]) {
-        //             bat """
-        //             docker login -u $DOCKER_REGISTRY -p %DOCKER_PASSWORD%
-        //             docker push $DOCKER_REGISTRY/$IMAGE_NAME:latest
-        //             """
-        //         }
-        //     }
-        // }
-
-        // stage('Deploy Container') {
-        //     steps {
-        //         bat "docker run -d -p 5000:5000 --name flask-container $DOCKER_REGISTRY/$IMAGE_NAME:latest"
-        //     }
-        // }
+            }
+        }
     }
 }
-
