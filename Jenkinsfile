@@ -51,7 +51,6 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh """
-                // docker build -t $DOCKER_REGISTRY/$IMAGE_NAME:latest .
                 docker build -t $IMAGE_NAME:latest .
                 """
             }
