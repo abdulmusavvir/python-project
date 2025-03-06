@@ -17,13 +17,13 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                bat 'pip install -r requirements.txt'
+                sh 'pip install -r requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
-                bat 'pytest --junitxml=pytest-report.xml'
+                sh 'pytest --junitxml=pytest-report.xml'
             }
         }
 
@@ -50,7 +50,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                bat """
+                sh """
                 // docker build -t $DOCKER_REGISTRY/$IMAGE_NAME:latest .
                 docker build -t $IMAGE_NAME:latest .
                 """
