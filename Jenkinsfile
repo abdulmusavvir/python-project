@@ -3,13 +3,14 @@ pipeline {
 
     environment {
         DOCKER_HOST = "tcp://20.235.247.197:2375"  // Connect to Docker on Azure
-        AZURE_CLIENT_ID = "e0ee6f35-dcc1-4da9-8a3a-32b341d74859"
-        AZURE_CLIENT_SECRET = "2yO8Q~Nlg_ogyoPW3iMXc0nBg9jCgn0j95o4Oacx"
-        AZURE_TENANT_ID = credentials('AZURE_TENANT_ID')
-        AZURE_SUBSCRIPTION_ID = "0a613baa-b33d-44d7-a7dd-f60f1b6a4eb7"
-        ACR_NAME = credentials('ACR_NAME')
+        AZURE_CLIENT_ID = "366a3d0b-2fa4-4cbc-8627-d37c2d90153b"
+        AZURE_CLIENT_SECRET = "b_L8Q~HxxpH5O9kb22MrpkEicxbikf7ltrp32a8I"
+        AZURE_TENANT_ID = "0a613baa-b33d-44d7-a7dd-f60f1b6a4eb7"
+        AZURE_SUBSCRIPTION_ID = "2c867d44-5881-44bf-be4f-bc81b5554f2d"
+        ACR_NAME = credentials('ACR_NAME')   // Fetch ACR name from Jenkins credentials
         IMAGE_NAME = "myapp"
-        IMAGE_TAG = "${BUILD_ID}"
+        IMAGE_TAG = "${BUILD_ID}"            // Jenkins Build ID as the tag
+        LATEST_TAG = "latest"                // Additional "latest" tag
     }
 
     stages {
@@ -38,6 +39,16 @@ pipeline {
                 script {
                     sh '''
                     docker build -t "$ACR_NAME.azurecr.io/$IMAGE_NAME:$IMAGE_TAG" .
+                    '''
+                }
+            }
+        }
+
+        stage('Tag Docker Image') {
+            steps {
+                script {
+                    sh '''
+                    docker tag "$ACR_NAME.azurecr.io/$IMAGE_NAME:$IMAGE_TAG" "$ACR_NAME.azurecr.io/$IMAGE_NAME:$LATEST_TAG"
                     '''
                 }
             }
