@@ -28,14 +28,7 @@ pipeline {
         stage('Azure Login') {
             steps {
                 script {
-                    sh '''
-                    az login --service-principal \
-                        --username "$AZURE_CLIENT_ID" \
-                        --password "$AZURE_CLIENT_SECRET" \
-                        --tenant "$AZURE_TENANT_ID"
-
-                    az acr login --name "$ACR_NAME"
-                    '''
+                    sh 'docker login -u mycontainerRegistry20250306 -p k76BRy/4VIwa8zGjxQGIvj9Nlw2jgENvzezxPReR6V+ACRB50ErH mycontainerregistry20250306.azurecr.io'
                 }
             }
         }
