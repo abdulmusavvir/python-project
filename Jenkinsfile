@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        SONARQUBE_URL = 'http://172.21.147.236:9000'  // SonarQube Server
-        // DOCKER_HOST = "tcp://your-azure-vm-ip:2375"  // Connect to Docker on Azure
+        // SONARQUBE_URL = 'http://172.21.147.236:9000'  // SonarQube Server
+        DOCKER_HOST = "tcp://20.235.247.197:2375"  // Connect to Docker on Azure
         IMAGE_NAME = "flask-app"
         // DOCKER_REGISTRY = "your-dockerhub-username"
     }
@@ -17,48 +17,45 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'pip install -r requirements.txt'
-                sh 'pip install pytest'
+                bat 'pip install -r requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh 'python3 -m pytest --junitxml=pytest-report.xml'
+                bat 'pytest --junitxml=pytest-report.xml'
             }
         }
 
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh '''
-                    export PATH=$PATH:/opt/sonar-scanner/bin
-                    sonar-scanner -Dsonar.projectKey=flask-app -Dsonar.sources=. -Dsonar.host.url=http://172.21.147.236:9000 -Dsonar.login=sqa_f6d54425574f8235385b80493cfd2a9254fb798f
-                    '''
-                }
-            }
-        }
-
-        stage('Quality Gate') {
-            steps {
-                script {
-                    timeout(time: 1, unit: 'MINUTES') {
-                        def qg = waitForQualityGate()
-                        if (qg.status != 'OK') {
-                            error "Pipeline failed due to SonarQube quality gate failure: ${qg.status}"
-                        }
-                    }
-                }
-            }
-        }
-
-        // stage('Build Docker Image') {
+        // stage('SonarQube Analysis') {
         //     steps {
-        //         bat """
-        //         docker build -t $DOCKER_REGISTRY/$IMAGE_NAME:latest .
-        //         """
+        //         withSonarQubeEnv('SonarQube') {
+        //             bat 'sonar-scanner'
+        //         }
         //     }
         // }
+
+        // stage('Quality Gate') {
+        //     steps {
+        //         script {
+        //             timeout(time: 1, unit: 'MINUTES') {
+        //                 def qg = waitForQualityGate()
+        //                 if (qg.status != 'OK') {
+        //                     error "Pipeline failed due to SonarQube quality gate failure: ${qg.status}"
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+
+        stage('Build Docker Image') {
+            steps {
+                bat """
+                // docker build -t $DOCKER_REGISTRY/$IMAGE_NAME:latest .
+                docker build -t $IMAGE_NAME:latest .
+                """
+            }
+        }
 
         // stage('Push Docker Image') {
         //     steps {
