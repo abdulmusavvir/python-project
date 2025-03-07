@@ -26,27 +26,27 @@ pipeline {
         }
 
 
-        // stage('Azure Login') {
-        //     steps {
-        //         script {
-        //             sh '''
-        //             az login --service-principal \
-        //                 --username "$AZURE_CLIENT_ID" \
-        //                 --password "$AZURE_CLIENT_SECRET" \
-        //                 --tenant "$AZURE_TENANT_ID"
+        stage('Azure Login') {
+            steps {
+                script {
+                    sh '''
+                    az login --service-principal \
+                        --username "$AZURE_CLIENT_ID" \
+                        --password "$AZURE_CLIENT_SECRET" \
+                        --tenant "$AZURE_TENANT_ID"
 
-        //             az acr login --name "$ACR_NAME"
-        //             '''
-        //         }
-        //     }
-
-        stage ('Azure ACR Login'){
-            steps{
-                script{
-                    sh 'docker login $ACR_NAME.azurecr.io -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET'
+                    az acr login --name "$ACR_NAME"
+                    '''
                 }
             }
-        }
+
+        // stage ('Azure ACR Login'){
+        //     steps{
+        //         script{
+        //             sh 'docker login $ACR_NAME.azurecr.io -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET'
+        //         }
+        //     }
+        // }
 
         stage('Build Docker Image') {
             steps {
