@@ -39,6 +39,7 @@ pipeline {
                     '''
                 }
             }
+        }
 
         // stage ('Azure ACR Login'){
         //     steps{
