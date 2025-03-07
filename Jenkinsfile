@@ -63,7 +63,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    docker tag "$ACR_NAME.azurecr.io/$IMAGE_NAME:$IMAGE_TAG" "$ACR_NAME.azurecr.io/$IMAGE_NAME:$LATEST_TAG"
+                    docker tag "$ACR_NAME.azurecr.io/$IMAGE_NAME:$IMAGE_TAG" "$ACR_NAME.azurecr.io/$IMAGE_NAME:$IMAGE_TAG"
                     '''
                 }
             }
