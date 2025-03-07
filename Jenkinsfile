@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HOST = "tcp://20.235.247.197:2375"  // Connect to Docker on Azure
+        DOCKER_HOST = "tcp://98.70.53.123:2375"  // Connect to Docker on Azure
         AZURE_CLIENT_ID = credentials('AZURE_CLIENT_ID')
         AZURE_CLIENT_SECRET = credentials('AZURE_CLIENT_SECRET')
         AZURE_TENANT_ID = credentials('AZURE_TENANT_ID')
@@ -26,19 +26,27 @@ pipeline {
         }
 
 
-        stage('Azure Login') {
-            steps {
-                script {
-                    sh '''
-                    az login --service-principal \
-                        --username "$AZURE_CLIENT_ID" \
-                        --password "$AZURE_CLIENT_SECRET" \
-                        --tenant "$AZURE_TENANT_ID"
+        // stage('Azure Login') {
+        //     steps {
+        //         script {
+        //             sh '''
+        //             az login --service-principal \
+        //                 --username "$AZURE_CLIENT_ID" \
+        //                 --password "$AZURE_CLIENT_SECRET" \
+        //                 --tenant "$AZURE_TENANT_ID"
 
-                    az acr login --name "$ACR_NAME"
-                    '''
+        //             az acr login --name "$ACR_NAME"
+        //             '''
+        //         }
+        //     }
+
+        stage ('Azure ACR Login'){
+            steps{
+                script{
+                    sh 'docker login $ACR_NAME.azurecr.io -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET'
                 }
             }
+        }
 
         stage('Build Docker Image') {
             steps {
