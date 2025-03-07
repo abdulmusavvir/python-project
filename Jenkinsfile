@@ -24,6 +24,14 @@ pipeline {
                 sh 'pip install -r requirements.txt'
             }
         }
+        stage('docker test') {
+            agent{
+                label 'docker-agent'
+            }
+            steps {
+                sh 'docker images'
+            }
+        }
 
 
         stage('Azure Login') {
